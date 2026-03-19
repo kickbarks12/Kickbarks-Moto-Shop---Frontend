@@ -112,19 +112,28 @@ function setupAuthUI() {
   const btn = document.getElementById("auth-btn");
   const token = localStorage.getItem("token");
 
+  const ordersLinks = document.querySelectorAll('a[href="orders.html"]');
+
   if (!btn) return;
 
   if (token) {
     btn.innerText = "Logout";
     btn.onclick = () => {
       localStorage.removeItem("token");
-      location.reload();
+      window.location.href = "index.html";
     };
+
+    // show orders
+    ordersLinks.forEach(link => link.style.display = "inline-block");
+
   } else {
     btn.innerText = "Login";
     btn.onclick = () => {
       window.location.href = "login.html";
     };
+
+    // hide orders
+    ordersLinks.forEach(link => link.style.display = "none");
   }
 }
 

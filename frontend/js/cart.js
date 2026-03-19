@@ -1,5 +1,9 @@
 const API_URL = "http://localhost:5000/api";
 const token = localStorage.getItem("token");
+if (!token) {
+  alert("Please login first");
+  window.location.href = "login.html";
+}
 
 document.addEventListener("DOMContentLoaded", loadCart);
 
@@ -7,36 +11,59 @@ async function loadCart() {
   const cartEl = document.getElementById("cart");
   const totalEl = document.getElementById("total");
 
-  const res = await fetch(`${API_URL}/cart`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  try {
+    cartEl.innerHTML = "Loading...";
 
-  const data = await res.json();
+    const res = await fetch(`${API_URL}/cart`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-  cartEl.innerHTML = "";
-  let total = 0;
+    if (!res.ok) throw new Error("Failed");
 
-  data.items.forEach(item => {
-    total += item.product.price * item.quantity;
+    const data = await res.json();
 
-    cartEl.innerHTML += `
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <strong>${item.product.name}</strong><br>
-          ₱${item.product.price}
-        </div>
+    cartEl.innerHTML = "";
+    let total = 0;
 
-        <div>
-          <button onclick="updateQty('${item.product._id}', -1)" class="btn btn-sm btn-danger">-</button>
-          <span class="mx-2">${item.quantity}</span>
-          <button onclick="updateQty('${item.product._id}', 1)" class="btn btn-sm btn-success">+</button>
-          <button onclick="removeItem('${item.product._id}')" class="btn btn-sm btn-dark ms-2">X</button>
-        </div>
-      </li>
-    `;
-  });
+    if (!data.items.length) {
+      cartEl.innerHTML = "<p class='text-center'>Your cart is empty 🛒</p>";
+      totalEl.innerText = 0;
+      return;
+    }
 
-  totalEl.innerText = total;
+    data.items.forEach(item => {
+      total += item.product.price * item.quantity;
+
+      cartEl.innerHTML += `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>${item.product.name}</strong><br>
+            ₱${item.product.price}
+          </div>
+
+          <div>
+            <button 
+              onclick="updateQty('${item.product._id}', -1)" 
+              class="btn btn-sm btn-danger"
+              ${item.quantity <= 1 ? "disabled" : ""}
+            >-</button>
+
+            <span class="mx-2">${item.quantity}</span>
+
+            <button onclick="updateQty('${item.product._id}', 1)" class="btn btn-sm btn-success">+</button>
+
+            <button onclick="removeItem('${item.product._id}')" class="btn btn-sm btn-dark ms-2">X</button>
+          </div>
+        </li>
+      `;
+    });
+
+    totalEl.innerText = total;
+
+  } catch (err) {
+    console.error(err);
+    cartEl.innerHTML = "<p class='text-danger'>Failed to load cart ❌</p>";
+  }
 }
 
 // ➕➖ UPDATE QTY

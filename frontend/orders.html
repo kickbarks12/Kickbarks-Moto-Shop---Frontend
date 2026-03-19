@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Kickbarks Moto Shop</title>
+    <title>My Orders</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -23,24 +23,26 @@
         </div>
     </nav>
 
+    <!-- ✅ CONTENT -->
     <div class="container mt-5">
-        <h1 class="text-center">Products</h1>
+        <h2>My Orders 📦</h2>
 
-        <!-- 🔄 Loading -->
-        <div id="loading" class="text-center my-5">
+        <!-- Loading -->
+        <div id="loading" class="text-center my-4">
             <div class="spinner-border"></div>
-            <p>Loading products...</p>
+            <p>Loading orders...</p>
         </div>
 
-        <!-- ❌ No products -->
-        <div id="no-products" class="text-center text-muted d-none">
-            No products found 😢
+        <!-- Empty -->
+        <div id="no-orders" class="text-muted d-none">
+            No orders yet 😢
         </div>
 
-        <!-- ✅ Products -->
-        <div id="products" class="row"></div>
+        <!-- Orders list -->
+        <div id="orders"></div>
     </div>
 
+    <script src="./js/orders.js"></script>
     <script src="./js/app.js"></script>
 </body>
 

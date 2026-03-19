@@ -1,6 +1,9 @@
 const API_URL = "http://localhost:5000/api";
 const token = localStorage.getItem("token");
-
+if (!token) {
+  alert("Unauthorized");
+  window.location.href = "login.html";
+}
 async function addProduct() {
   const name = document.getElementById("name").value;
   const price = document.getElementById("price").value;

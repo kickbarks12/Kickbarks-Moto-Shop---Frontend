@@ -13,8 +13,13 @@ function login() {
   })
   .then(res => res.json())
   .then(data => {
-    localStorage.setItem("token", data.token);
-    alert("Login successful");
-    window.location.href = "index.html";
-  });
+  if (!data.token) {
+    alert("Invalid email or password ❌");
+    return;
+  }
+
+  localStorage.setItem("token", data.token);
+  alert("Login successful ✅");
+  window.location.href = "index.html";
+});
 }
