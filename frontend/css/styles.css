@@ -1,0 +1,103 @@
+body {
+  background-color: #f8f9fa;
+}
+
+/* HERO */
+.hero {
+  height: 90vh;
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)),
+              url('https://images.unsplash.com/photo-1558980664-10e7170c0f3b');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Buttons smoother */
+.btn {
+  border-radius: 8px;
+}
+
+/* Navbar spacing fix */
+.navbar .btn {
+  font-size: 14px;
+}
+/* PRODUCT CARD */
+.product-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s;
+  background: white;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+}
+
+.product-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Price highlight */
+.product-price {
+  color: #f39c12;
+  font-weight: bold;
+}
+/* Smooth animations */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Buttons */
+.btn:hover {
+  transform: scale(1.03);
+}
+
+/* Cards */
+.card {
+  border-radius: 14px;
+}
+
+/* Shadows upgrade */
+.shadow-sm {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}
+
+/* Hover lift */
+.product-card:hover {
+  transform: translateY(-8px);
+}
+
+/* Inputs */
+input, select {
+  border-radius: 8px !important;
+}
+
+/* Section spacing */
+.container {
+  max-width: 1100px;
+}
+/* Orders card */
+.card {
+  border-radius: 12px;
+}
+
+/* Order hover */
+.card:hover {
+  transform: translateY(-4px);
+}
+/* Order cards */
+.order-card {
+  border-radius: 14px;
+  transition: 0.3s;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Badge style */
+.badge {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}

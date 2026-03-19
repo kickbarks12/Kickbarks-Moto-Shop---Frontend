@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - Kickbarks</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark bg-black px-3">
+        <span class="navbar-brand text-warning fw-bold">🧾 Checkout</span>
+
+        <a href="cart.html" class="btn btn-outline-light">Back to Cart</a>
+    </nav>
+
+    <div class="container py-5">
+
+        <div class="row">
+            <!-- ADDRESS -->
+            <div class="col-lg-6">
+                <div class="card p-4 shadow-sm">
+                    <h5>Shipping Details</h5>
+
+                    <input id="fullname" class="form-control mb-2" placeholder="Full Name">
+                    <input id="phone" class="form-control mb-2" placeholder="Phone Number">
+                    <input id="address" class="form-control mb-2" placeholder="Address">
+
+                    <select id="payment" class="form-control">
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="GCash">GCash</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="col-lg-6">
+                <div class="card p-4 shadow-sm">
+                    <h5>Order Summary</h5>
+
+                    <div id="checkout-items"></div>
+
+                    <hr>
+
+                    <h5>Total: ₱<span id="checkout-total">0</span></h5>
+
+                    <button onclick="placeOrder()" class="btn btn-success w-100 mt-3">
+                        Place Order
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./js/checkout.js"></script>
+    <script src="./js/app.js"></script>
+
+</body>
+
+</html>

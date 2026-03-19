@@ -2,14 +2,13 @@ const API_URL = "http://localhost:5000/api";
 
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("products");
-  const loading = document.getElementById("loading");
-  const emptyMsg = document.getElementById("no-products");
 
-  // If not shop page → stop
-  if (!container) return;
+  if (container) {
+    loadProducts();
+  }
 
-  loadProducts();
   updateCartCount();
+  setupAuthUI();
 });
 
 // 🔥 LOAD PRODUCTS
@@ -19,6 +18,8 @@ async function loadProducts() {
   const emptyMsg = document.getElementById("no-products");
 
   try {
+    container.innerHTML = ""; // ✅ prevent duplicates
+
     const res = await fetch(`${API_URL}/products`);
     const products = await res.json();
 
@@ -31,18 +32,23 @@ async function loadProducts() {
 
     products.forEach(product => {
       container.innerHTML += `
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow-sm">
-            <img src="${product.image}" class="card-img-top">
-            <div class="card-body d-flex flex-column">
-              <h5>${product.name}</h5>
-              <p class="text-muted">₱${product.price}</p>
+        <div class="col-md-4 col-lg-3">
+          <div class="card product-card h-100 shadow-sm">
 
-              <button onclick="addToCart('${product._id}')" 
+            <img src="${product.image || 'https://via.placeholder.com/300'}"
+                 class="product-img"
+                 onerror="this.src='https://via.placeholder.com/300'">
+
+            <div class="card-body d-flex flex-column">
+              <h6 class="fw-bold">${product.name}</h6>
+              <p class="product-price mb-2">₱${product.price}</p>
+
+              <button onclick="addToCart('${product._id}')"
                 class="btn btn-dark mt-auto">
                 Add to Cart
               </button>
             </div>
+
           </div>
         </div>
       `;
@@ -54,41 +60,46 @@ async function loadProducts() {
   }
 }
 
-// ---
-
-// ## 🛒 ADD TO CART + UPDATE COUNT
-
+// 🛒 ADD TO CART
 async function addToCart(productId) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    alert("Please login first");
-    window.location.href = "login.html";
+    showToast("Please login first", "danger");
+    setTimeout(() => window.location.href = "login.html", 1000);
     return;
   }
 
-  await fetch(`${API_URL}/cart`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ productId, quantity: 1 })
-  });
+  try {
+    await fetch(`${API_URL}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ productId, quantity: 1 })
+    });
 
-  alert("Added to cart 🛒");
-  updateCartCount(); // 🔥 update badge
+    showToast("Added to cart 🛒", "success");
+    updateCartCount();
+
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to add to cart", "danger");
+  }
 }
 
-// ---
-
-// ## 🔢 CART COUNT
-
+// 🔢 CART COUNT
 async function updateCartCount() {
   const token = localStorage.getItem("token");
   const badge = document.getElementById("cart-count");
 
-  if (!badge || !token) return;
+  if (!badge) return;
+
+  if (!token) {
+    badge.innerText = 0;
+    return;
+  }
 
   try {
     const res = await fetch(`${API_URL}/cart`, {
@@ -96,6 +107,11 @@ async function updateCartCount() {
     });
 
     const data = await res.json();
+
+    if (!data.items) {
+      badge.innerText = 0;
+      return;
+    }
 
     const totalItems = data.items.reduce(
       (sum, item) => sum + item.quantity,
@@ -106,12 +122,14 @@ async function updateCartCount() {
 
   } catch (err) {
     console.error(err);
+    badge.innerText = 0;
   }
 }
+
+// 🔐 AUTH UI
 function setupAuthUI() {
   const btn = document.getElementById("auth-btn");
   const token = localStorage.getItem("token");
-
   const ordersLinks = document.querySelectorAll('a[href="orders.html"]');
 
   if (!btn) return;
@@ -123,7 +141,6 @@ function setupAuthUI() {
       window.location.href = "index.html";
     };
 
-    // show orders
     ordersLinks.forEach(link => link.style.display = "inline-block");
 
   } else {
@@ -132,9 +149,25 @@ function setupAuthUI() {
       window.location.href = "login.html";
     };
 
-    // hide orders
     ordersLinks.forEach(link => link.style.display = "none");
   }
 }
 
-setupAuthUI();
+// 🔥 TOAST (replace alert)
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast align-items-center text-bg-${type} border-0 show position-fixed bottom-0 end-0 m-3`;
+  toast.style.zIndex = "9999";
+
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        ${message}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 2000);
+}

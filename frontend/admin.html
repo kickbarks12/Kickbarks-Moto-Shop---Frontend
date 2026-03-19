@@ -1,18 +1,48 @@
-<body class="container mt-5">
+<!DOCTYPE html>
+<html lang="en">
 
-    <h2>Add Product</h2>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Kickbarks</title>
 
-    <input id="name" class="form-control mb-2" placeholder="Name">
-    <input id="price" class="form-control mb-2" placeholder="Price">
-    <input id="image" class="form-control mb-2" placeholder="Image URL">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
 
-    <button onclick="addProduct()" class="btn btn-success">Add</button>
+<body>
 
-    <hr>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark bg-black px-3">
+        <span class="navbar-brand text-warning fw-bold">⚙️ Admin Panel</span>
 
-    <h3>Products</h3>
-    <ul id="admin-products"></ul>
+        <a href="admin-orders.html" class="btn btn-outline-light">Orders</a>
+    </nav>
+
+    <div class="container py-5">
+
+        <h3 class="mb-4">📦 Manage Products</h3>
+
+        <!-- ADD PRODUCT -->
+        <div class="card p-3 mb-4 shadow-sm">
+            <h5>Add Product</h5>
+
+            <input id="name" class="form-control mb-2" placeholder="Product Name">
+            <input id="price" type="number" class="form-control mb-2" placeholder="Price">
+            <input id="image" class="form-control mb-2" placeholder="Image URL">
+
+            <button onclick="addProduct()" class="btn btn-warning">
+                Add Product
+            </button>
+        </div>
+
+        <!-- PRODUCT LIST -->
+        <div id="admin-products" class="row g-4"></div>
+
+    </div>
 
     <script src="./js/admin.js"></script>
     <script src="./js/app.js"></script>
+
 </body>
+
+</html>
