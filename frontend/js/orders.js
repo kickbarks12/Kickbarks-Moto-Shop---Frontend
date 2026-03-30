@@ -2,16 +2,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    alert("Please login first.");
+  showToast("Please login first.", "danger");
+  setTimeout(() => {
     window.location.href = "login.html";
-    return;
-  }
+  }, 700);
+  return;
+}
 
   loadOrders();
 });
 
 function getToken() {
   return localStorage.getItem("token");
+}
+
+function getProductImage(product) {
+  if (product?.image) return product.image;
+
+  if (Array.isArray(product?.images) && product.images.length > 0) {
+    const firstImage = product.images[0];
+    if (typeof firstImage === "string") {
+      return firstImage.startsWith("http") ? firstImage : `${window.API_BASE}${firstImage}`;
+    }
+  }
+
+  return "https://via.placeholder.com/200x160?text=No+Image";
 }
 
 function formatDate(dateString) {
@@ -27,24 +42,29 @@ function formatDate(dateString) {
   });
 }
 
+function formatPrice(value) {
+  return `₱${Number(value || 0).toLocaleString("en-PH")}`;
+}
+
 function getStatusBadge(status) {
   const statusMap = {
     Pending: "warning",
     Processing: "info",
     Shipped: "primary",
     Delivered: "success",
-    Cancelled: "danger"
+    Cancelled: "danger",
+    "Pending Payment": "warning"
   };
 
   const badgeType = statusMap[status] || "secondary";
-  return `<span class="badge bg-${badgeType}">${status || "Pending"}</span>`;
+  return `<span class="badge bg-${badgeType} rounded-pill px-3 py-2">${status || "Pending"}</span>`;
 }
 
 async function loadOrders() {
   const container = document.getElementById("orders-container");
   if (!container) return;
 
-  container.innerHTML = `<p>Loading orders...</p>`;
+  container.innerHTML = `<div class="loading-state">Loading orders...</div>`;
 
   try {
     const res = await fetch(`${window.API_BASE}/api/orders`, {
@@ -57,7 +77,7 @@ async function loadOrders() {
 
     if (!res.ok) {
       container.innerHTML = `
-        <div class="alert alert-danger">
+        <div class="alert alert-danger rounded-4">
           ${orders.message || "Failed to load orders."}
         </div>
       `;
@@ -66,12 +86,10 @@ async function loadOrders() {
 
     if (!Array.isArray(orders) || orders.length === 0) {
       container.innerHTML = `
-        <div class="card border-0 shadow-sm rounded-4">
-          <div class="card-body p-4 text-center">
-            <h4 class="fw-bold mb-2">No orders yet</h4>
-            <p class="text-muted mb-3">You haven’t placed any phone order yet.</p>
-            <a href="shop.html" class="btn btn-warning">Start Shopping</a>
-          </div>
+        <div class="empty-state">
+          <h4 class="fw-bold mb-2">No orders yet</h4>
+          <p class="mb-3">You haven’t placed any phone order yet.</p>
+          <a href="shop.html" class="btn btn-primary rounded-pill px-4">Start Shopping</a>
         </div>
       `;
       return;
@@ -86,14 +104,13 @@ async function loadOrders() {
             const subtotal = quantity * price;
 
             return `
-              <div class="border rounded-4 p-3 mb-3 bg-light-subtle">
+              <div class="order-item mb-3">
                 <div class="row g-3 align-items-center">
                   <div class="col-md-2">
                     <img
-                      src="${product.image || 'https://via.placeholder.com/200x160?text=No+Image'}"
+                      src="${getProductImage(product)}"
                       alt="${product.name || 'Product'}"
-                      class="img-fluid rounded-3 w-100"
-                      style="height: 120px; object-fit: cover;"
+                      class="order-item-image"
                     >
                   </div>
 
@@ -107,7 +124,7 @@ async function loadOrders() {
 
                   <div class="col-md-2">
                     <span class="text-muted d-block">Price</span>
-                    <strong>₱${price.toLocaleString()}</strong>
+                    <strong>${formatPrice(price)}</strong>
                   </div>
 
                   <div class="col-md-1">
@@ -117,7 +134,7 @@ async function loadOrders() {
 
                   <div class="col-md-2">
                     <span class="text-muted d-block">Subtotal</span>
-                    <strong>₱${subtotal.toLocaleString()}</strong>
+                    <strong>${formatPrice(subtotal)}</strong>
                   </div>
                 </div>
               </div>
@@ -126,22 +143,20 @@ async function loadOrders() {
         : "";
 
       return `
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-              <div>
-                <h5 class="fw-bold mb-1">Order #${String(order._id).slice(-6).toUpperCase()}</h5>
-                <p class="text-muted mb-0">Placed on ${formatDate(order.createdAt)}</p>
-              </div>
-              ${getStatusBadge(order.status)}
+        <div class="order-card mb-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div>
+              <h5 class="fw-bold mb-1">Order #${String(order._id).slice(-6).toUpperCase()}</h5>
+              <p class="text-muted mb-0">Placed on ${formatDate(order.createdAt)}</p>
             </div>
+            ${getStatusBadge(order.status)}
+          </div>
 
-            ${itemsHtml}
+          ${itemsHtml}
 
-            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-              <span class="fw-semibold">Total Amount</span>
-              <h5 class="fw-bold text-warning mb-0">₱${Number(order.totalPrice || 0).toLocaleString()}</h5>
-            </div>
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+            <span class="fw-semibold">Total Amount</span>
+            <h5 class="price-main mb-0">${formatPrice(order.totalPrice || 0)}</h5>
           </div>
         </div>
       `;
@@ -149,7 +164,7 @@ async function loadOrders() {
   } catch (error) {
     console.error("Load orders error:", error);
     container.innerHTML = `
-      <div class="alert alert-danger">
+      <div class="alert alert-danger rounded-4">
         Something went wrong while loading your orders.
       </div>
     `;

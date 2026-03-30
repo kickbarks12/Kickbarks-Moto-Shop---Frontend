@@ -4,58 +4,205 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PhoneHub - Home</title>
+    <title>Kickbarks PhoneHub - Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
     <div class="page-wrap">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-sm px-3">
+        <nav class="navbar navbar-expand-lg moto-nav px-3">
             <div class="container">
-                <a class="navbar-brand fw-bold text-warning" href="index.html">📱 PhoneHub</a>
+                <a class="navbar-brand" href="index.html">📱 Kickbarks PhoneHub</a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="mainNav">
-                    <div class="ms-auto d-flex flex-wrap gap-2 align-items-center">
-                        <a href="index.html" class="btn btn-outline-light btn-sm">Home</a>
-                        <a href="shop.html" class="btn btn-outline-warning btn-sm">Shop</a>
-                        <a href="cart.html" class="btn btn-outline-light btn-sm">
+                    <div class="ms-auto d-flex flex-wrap gap-2 align-items-center pt-3 pt-lg-0">
+                        <a href="index.html" class="btn btn-light nav-chip btn-sm">Home</a>
+                        <a href="shop.html" class="btn btn-outline-dark nav-chip btn-sm">Shop</a>
+                        <a href="cart.html" class="btn btn-outline-dark nav-chip btn-sm">
                             Cart 🛒 <span id="cart-count" class="badge bg-danger">0</span>
                         </a>
-                        <div id="auth-area" class="d-flex gap-2"></div>
+                        <div id="auth-area" class="d-flex gap-2 flex-wrap"></div>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <main class="container py-4">
-            <section class="hero text-center mb-5">
-                <h1 class="display-5 fw-bold">Latest Smartphones at the Best Price</h1>
-                <p class="lead mt-3">
-                    Discover premium phones, budget devices, and top brands in one place.
-                </p>
-                <a href="shop.html" class="btn btn-warning btn-lg mt-3">Shop Now</a>
+        <main>
+            <section class="hero-phone">
+                <div class="container">
+                    <div class="hero-shell">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-6">
+                                <span class="hero-kicker">Kickbarks V4 style • Cellphone website</span>
+                                <h1 class="hero-title">
+                                    Upgrade Your Everyday
+                                    <span>With Better Phones</span>
+                                </h1>
+                                <p class="hero-sub">
+                                    Discover flagship smartphones, budget-friendly devices, and top mobile brands
+                                    in one premium shopping experience built for Kickbarks.
+                                </p>
+
+                                <div class="hero-actions">
+                                    <a href="shop.html" class="btn btn-primary btn-lg">Shop Phones</a>
+                                    <a href="#featured-section" class="btn btn-outline-dark btn-lg">Browse Featured</a>
+                                </div>
+
+                                <div class="hero-stats">
+                                    <div class="hero-stat">
+                                        <strong>Top Brands</strong>
+                                        <span>Apple, Samsung, Xiaomi, vivo</span>
+                                    </div>
+                                    <div class="hero-stat">
+                                        <strong>Fast Checkout</strong>
+                                        <span>Smooth and simple ordering flow</span>
+                                    </div>
+                                    <div class="hero-stat">
+                                        <strong>Trusted Store</strong>
+                                        <span>Premium layout inspired by V4</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="hero-device-wrap">
+                                    <div class="hero-device">
+                                        <div class="hero-screen">
+                                            <span class="screen-badge">New Arrival</span>
+
+                                            <div class="screen-card">
+                                                <h4>Premium Smartphone</h4>
+                                                <p>Modern design. Powerful chipset. All-day battery.</p>
+
+                                                <div class="spec-row">
+                                                    <span>Display</span>
+                                                    <span>6.7" AMOLED</span>
+                                                </div>
+                                                <div class="spec-row">
+                                                    <span>Storage</span>
+                                                    <span>256GB</span>
+                                                </div>
+                                                <div class="spec-row">
+                                                    <span>Camera</span>
+                                                    <span>50MP Triple Cam</span>
+                                                </div>
+                                                <div class="spec-row">
+                                                    <span>Battery</span>
+                                                    <span>5000mAh</span>
+                                                </div>
+
+                                                <div class="mini-product">
+                                                    <div class="small text-muted mb-1">Kickbarks featured deal</div>
+                                                    <div class="price">₱29,999</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <section>
-                <h2 class="section-title">Featured Phones</h2>
-                <div class="row g-4" id="featured-products"></div>
+            <section class="section-block">
+                <div class="container">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">Shop by Brand</h2>
+                            <p class="section-text">A V4-inspired section, but converted for cellphone shopping.</p>
+                        </div>
+                    </div>
+
+                    <div class="brand-grid">
+                        <div class="brand-card">
+                            <div class="brand-icon">🍎</div>
+                            <h3 class="brand-title">Apple</h3>
+                            <p>iPhone models with premium performance.</p>
+                        </div>
+
+                        <div class="brand-card">
+                            <div class="brand-icon">📱</div>
+                            <h3 class="brand-title">Samsung</h3>
+                            <p>Galaxy devices for every budget level.</p>
+                        </div>
+
+                        <div class="brand-card">
+                            <div class="brand-icon">⚡</div>
+                            <h3 class="brand-title">Xiaomi</h3>
+                            <p>Fast, stylish, and high-value smartphones.</p>
+                        </div>
+
+                        <div class="brand-card">
+                            <div class="brand-icon">🔋</div>
+                            <h3 class="brand-title">vivo / OPPO</h3>
+                            <p>Camera-ready and battery-friendly choices.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-block" id="featured-section">
+                <div class="container">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">Featured Phones</h2>
+                            <p class="section-text">These products are loaded from your backend.</p>
+                        </div>
+                        <a href="shop.html" class="btn btn-outline-primary rounded-pill px-4">View All</a>
+                    </div>
+
+                    <div class="row g-4" id="featured-products"></div>
+                </div>
+            </section>
+
+            <section class="section-block pb-4">
+                <div class="container">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">Why Shop With Us</h2>
+                            <p class="section-text">Same structure as your V4 premium feel, but for phones.</p>
+                        </div>
+                    </div>
+
+                    <div class="trust-grid">
+                        <div class="trust-card">
+                            <div class="trust-icon">🚚</div>
+                            <h5>Fast Delivery</h5>
+                            <p class="text-muted mb-0">Quick delivery for your smartphone orders.</p>
+                        </div>
+
+                        <div class="trust-card">
+                            <div class="trust-icon">🔒</div>
+                            <h5>Secure Checkout</h5>
+                            <p class="text-muted mb-0">Safe checkout flow with your existing backend.</p>
+                        </div>
+
+                        <div class="trust-card">
+                            <div class="trust-icon">⭐</div>
+                            <h5>Premium Experience</h5>
+                            <p class="text-muted mb-0">Cleaner homepage that matches your V4 style.</p>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
 
         <footer class="footer">
             <div class="container text-center">
-                <p class="mb-0">© 2026 PhoneHub. All rights reserved.</p>
+                <p class="mb-0">© 2026 Kickbarks PhoneHub. All rights reserved.</p>
             </div>
         </footer>
     </div>
 
     <script src="js/config.js"></script>
     <script src="js/navbar.js"></script>
+    <script src="js/ui.js"></script>
     <script src="js/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

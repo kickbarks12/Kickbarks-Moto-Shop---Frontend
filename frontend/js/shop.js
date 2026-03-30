@@ -12,6 +12,23 @@ function getToken() {
   return localStorage.getItem("token");
 }
 
+function getProductImage(product) {
+  if (product?.image) return product.image;
+
+  if (Array.isArray(product?.images) && product.images.length > 0) {
+    const firstImage = product.images[0];
+    if (typeof firstImage === "string") {
+      return firstImage.startsWith("http") ? firstImage : `${window.API_BASE}${firstImage}`;
+    }
+  }
+
+  return "https://via.placeholder.com/500x400?text=No+Image";
+}
+
+function formatPrice(value) {
+  return `₱${Number(value || 0).toLocaleString("en-PH")}`;
+}
+
 async function loadBrandOptions() {
   const brandSelect = document.getElementById("brand-filter");
   if (!brandSelect) return;
@@ -43,20 +60,27 @@ async function loadProducts() {
   const maxPrice = document.getElementById("price-filter")?.value || "";
 
   const params = new URLSearchParams();
-
   if (search) params.append("search", search);
   if (brand) params.append("brand", brand);
   if (ram) params.append("ram", ram);
   if (maxPrice) params.append("maxPrice", maxPrice);
 
-  container.innerHTML = `<p>Loading products...</p>`;
+  container.innerHTML = `
+    <div class="col-12">
+      <div class="loading-state">Loading phones...</div>
+    </div>
+  `;
 
   try {
     const res = await fetch(`${window.API_BASE}/api/products?${params.toString()}`);
     const products = await res.json();
 
     if (!Array.isArray(products) || products.length === 0) {
-      container.innerHTML = `<p class="text-muted">No products found.</p>`;
+      container.innerHTML = `
+        <div class="col-12">
+          <div class="empty-state">No products found.</div>
+        </div>
+      `;
       return;
     }
 
@@ -67,29 +91,35 @@ async function loadProducts() {
 
       return `
         <div class="col-md-6 col-lg-4 col-xl-3">
-          <div class="card product-card h-100 shadow-sm">
+          <div class="card product-card h-100">
             <img
-              src="${product.image || 'https://via.placeholder.com/300x220?text=No+Image'}"
+              src="${getProductImage(product)}"
               class="card-img-top"
               alt="${product.name}"
             >
+
             <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">${product.name}</h5>
+              <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                <h5 class="card-title mb-0">
+                  <a href="product.html?id=${product._id}" class="product-title-link">
+                    ${product.name}
+                  </a>
+                </h5>
                 ${stockBadge}
               </div>
 
-              <p class="text-muted mb-1">${product.brand || ""} ${product.model || ""}</p>
-              <p class="fw-bold text-warning mb-2">₱${Number(product.price || 0).toLocaleString()}</p>
+              <p class="product-meta mb-2">${product.brand || "-"} ${product.model || ""}</p>
+
+              <div class="price-main mb-2">${formatPrice(product.price)}</div>
 
               <p class="small text-muted mb-1">RAM: ${product.ram || "-"}</p>
               <p class="small text-muted mb-1">Storage: ${product.storage || "-"}</p>
               <p class="small text-muted mb-3">Chipset: ${product.chipset || "-"}</p>
 
               <div class="mt-auto d-grid gap-2">
-                <a href="product.html?id=${product._id}" class="btn btn-dark">View Details</a>
+                <a href="product.html?id=${product._id}" class="btn btn-dark rounded-pill">View Details</a>
                 <button
-                  class="btn btn-warning"
+                  class="btn btn-primary rounded-pill"
                   onclick="addToCart('${product._id}', ${product.stock || 0})"
                   ${product.stock <= 0 ? "disabled" : ""}
                 >
@@ -103,7 +133,11 @@ async function loadProducts() {
     }).join("");
   } catch (error) {
     console.error("Load products error:", error);
-    container.innerHTML = `<p class="text-danger">Failed to load products.</p>`;
+    container.innerHTML = `
+      <div class="col-12">
+        <div class="empty-state text-danger">Failed to load products.</div>
+      </div>
+    `;
   }
 }
 
@@ -111,13 +145,15 @@ async function addToCart(productId, stock) {
   const token = getToken();
 
   if (!token) {
-    alert("Please login first.");
-    window.location.href = "login.html";
+    showToast("Please login first.", "danger");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 700);
     return;
   }
 
   if (stock <= 0) {
-    alert("This product is out of stock.");
+    showToast("This product is out of stock.", "danger");
     return;
   }
 
@@ -137,16 +173,16 @@ async function addToCart(productId, stock) {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message || "Failed to add to cart");
+      showToast(data.message || "Failed to add to cart.", "danger");
       return;
     }
 
-    alert("Added to cart!");
+    showToast("Added to cart!", "success");
     if (typeof updateCartCount === "function") {
       updateCartCount();
     }
   } catch (error) {
     console.error("Add to cart error:", error);
-    alert("Something went wrong.");
+    showToast("Something went wrong.", "danger");
   }
 }

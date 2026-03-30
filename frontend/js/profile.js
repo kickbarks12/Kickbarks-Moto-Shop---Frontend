@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
-  const user = getStoredUser();
-
-  if (!token || !user) {
-    alert("Please login first.");
+  if (!token) {
     window.location.href = "login.html";
     return;
   }
@@ -12,75 +9,92 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("profile-form");
   if (form) {
-    form.addEventListener("submit", saveProfileLocally);
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await saveProfile();
+    });
   }
 });
 
-function getStoredUser() {
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+function getInitial(name) {
+  return (name || "U").charAt(0).toUpperCase();
+}
+
+async function loadProfile() {
   try {
-    return JSON.parse(localStorage.getItem("user")) || null;
-  } catch {
-    return null;
+    const res = await fetch(`${window.API_BASE}/api/users/me`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      },
+      credentials: "include"
+    });
+
+    const user = await res.json();
+
+    if (!res.ok) {
+      showInlineAlert("profile-alert", user.message || "Failed to load profile.");
+      return;
+    }
+
+    document.getElementById("name").value = user.name || "";
+    document.getElementById("email").value = user.email || "";
+
+    document.getElementById("profile-name").textContent = user.name || "User";
+    document.getElementById("profile-email").textContent = user.email || "No email";
+    document.getElementById("profile-role").textContent = user.role || "user";
+    document.getElementById("account-role").textContent = user.role || "user";
+
+    const avatar = document.getElementById("profile-avatar");
+    if (avatar) {
+      if (user.avatar) {
+        avatar.innerHTML = `<img src="${user.avatar}" alt="Avatar" class="profile-avatar-image">`;
+      } else {
+        avatar.textContent = getInitial(user.name);
+      }
+    }
+
+    localStorage.setItem("user", JSON.stringify(user));
+  } catch (error) {
+    console.error("Profile load error:", error);
+    showInlineAlert("profile-alert", "Something went wrong while loading profile.");
   }
 }
 
-function showProfileAlert(message, type = "success") {
-  const alertBox = document.getElementById("profile-alert");
-  if (!alertBox) return;
+async function saveProfile() {
+  const name = document.getElementById("name")?.value.trim();
 
-  alertBox.innerHTML = `
-    <div class="alert alert-${type} rounded-3" role="alert">
-      ${message}
-    </div>
-  `;
-}
-
-function loadProfile() {
-  const user = getStoredUser();
-  if (!user) return;
-
-  const name = user.name || "User";
-  const email = user.email || "No email";
-  const role = user.role || "user";
-  const firstLetter = name.charAt(0).toUpperCase();
-
-  const profileName = document.getElementById("profile-name");
-  const profileEmail = document.getElementById("profile-email");
-  const profileRole = document.getElementById("profile-role");
-  const profileAvatar = document.getElementById("profile-avatar");
-  const accountRole = document.getElementById("account-role");
-  const nameInput = document.getElementById("name");
-  const emailInput = document.getElementById("email");
-
-  if (profileName) profileName.textContent = name;
-  if (profileEmail) profileEmail.textContent = email;
-  if (profileRole) profileRole.textContent = role;
-  if (profileAvatar) profileAvatar.textContent = firstLetter;
-  if (accountRole) accountRole.textContent = role;
-  if (nameInput) nameInput.value = name;
-  if (emailInput) emailInput.value = email;
-}
-
-function saveProfileLocally(event) {
-  event.preventDefault();
-
-  const user = getStoredUser();
-  if (!user) return;
-
-  const nameInput = document.getElementById("name");
-  const updatedName = nameInput?.value.trim();
-
-  if (!updatedName) {
-    showProfileAlert("Name cannot be empty.", "danger");
+  if (!name) {
+    showInlineAlert("profile-alert", "Name is required.");
     return;
   }
 
-  const updatedUser = {
-    ...user,
-    name: updatedName
-  };
+  try {
+    const res = await fetch(`${window.API_BASE}/api/users/me`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name }),
+      credentials: "include"
+    });
 
-  localStorage.setItem("user", JSON.stringify(updatedUser));
-  loadProfile();
-  showProfileAlert("Profile updated locally.", "success");
+    const data = await res.json();
+
+    if (!res.ok) {
+      showInlineAlert("profile-alert", data.message || "Failed to update profile.");
+      return;
+    }
+
+    showInlineAlert("profile-alert", "Profile updated successfully.", "success");
+    showToast("Profile updated.", "success");
+    await loadProfile();
+  } catch (error) {
+    console.error("Profile save error:", error);
+    showInlineAlert("profile-alert", "Something went wrong while saving profile.");
+  }
 }

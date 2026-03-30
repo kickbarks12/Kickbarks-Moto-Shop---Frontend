@@ -5,14 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function getAdminToken() {
-  return localStorage.getItem("adminToken") || localStorage.getItem("token");
+  return localStorage.getItem("adminToken");
 }
 
 function getAdminUser() {
   try {
-    return JSON.parse(localStorage.getItem("adminUser")) ||
-      JSON.parse(localStorage.getItem("user")) ||
-      null;
+    return JSON.parse(localStorage.getItem("adminUser")) || null;
   } catch {
     return null;
   }
@@ -24,7 +22,7 @@ function guardAdminPage() {
 
   if (!token || !user || user.role !== "admin") {
     alert("Admin access only.");
-    window.location.href = "../login.html";
+    window.location.href = "./admin-login.html";
   }
 }
 
@@ -33,11 +31,9 @@ function setupAdminLogout() {
   if (!btn) return;
 
   btn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminUser");
-    window.location.href = "../login.html";
+    window.location.href = "./admin-login.html";
   });
 }
 
@@ -75,12 +71,11 @@ async function loadAdminOrders() {
   `;
 
   try {
-    // Change this endpoint later when your backend admin route is ready
     const res = await fetch(`${window.API_BASE}/api/orders/admin/all`, {
-  headers: {
-    Authorization: `Bearer ${getAdminToken()}`
-  }
-});
+      headers: {
+        Authorization: `Bearer ${getAdminToken()}`
+      }
+    });
 
     const orders = await res.json();
 
@@ -115,14 +110,12 @@ async function loadAdminOrders() {
 
       return `
         <tr>
-          <td>
-            <strong>#${String(order._id).slice(-6).toUpperCase()}</strong>
-          </td>
+          <td><strong>#${String(order._id).slice(-6).toUpperCase()}</strong></td>
           <td>${formatOrderDate(order.createdAt)}</td>
           <td>${itemCount}</td>
           <td>₱${Number(order.totalPrice || 0).toLocaleString()}</td>
           <td>
-            <span class="badge ${getStatusBadgeClass(order.status)}">
+            <span class="badge ${getStatusBadgeClass(order.status)} admin-status-badge">
               ${order.status || "Pending"}
             </span>
           </td>
@@ -170,15 +163,14 @@ function getStatusBadgeClass(status) {
 
 async function updateOrderStatus(orderId, status) {
   try {
-    // Change this endpoint later when your backend admin update route is ready
     const res = await fetch(`${window.API_BASE}/api/orders/admin/${orderId}/status`, {
-  method: "PUT",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${getAdminToken()}`
-  },
-  body: JSON.stringify({ status })
-});
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAdminToken()}`
+      },
+      body: JSON.stringify({ status })
+    });
 
     const data = await res.json();
 

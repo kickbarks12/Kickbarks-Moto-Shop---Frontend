@@ -2,64 +2,119 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Checkout - Kickbarks</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kickbarks PhoneHub - Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
+    <div class="page-wrap">
+        <nav class="navbar navbar-expand-lg moto-nav px-3">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">📱 Kickbarks PhoneHub</a>
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-dark bg-black px-3">
-        <span class="navbar-brand text-warning fw-bold">🧾 Checkout</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-        <a href="cart.html" class="btn btn-outline-light">Back to Cart</a>
-    </nav>
-
-    <div class="container py-5">
-
-        <div class="row">
-            <!-- ADDRESS -->
-            <div class="col-lg-6">
-                <div class="card p-4 shadow-sm">
-                    <h5>Shipping Details</h5>
-
-                    <input id="fullname" class="form-control mb-2" placeholder="Full Name">
-                    <input id="phone" class="form-control mb-2" placeholder="Phone Number">
-                    <input id="address" class="form-control mb-2" placeholder="Address">
-
-                    <select id="payment" class="form-control">
-                        <option value="COD">Cash on Delivery</option>
-                        <option value="GCash">GCash</option>
-                    </select>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <div class="ms-auto d-flex flex-wrap gap-2 align-items-center pt-3 pt-lg-0">
+                        <a href="index.html" class="btn btn-light nav-chip btn-sm">Home</a>
+                        <a href="shop.html" class="btn btn-outline-dark nav-chip btn-sm">Shop</a>
+                        <a href="cart.html" class="btn btn-outline-dark nav-chip btn-sm">
+                            Cart 🛒 <span id="cart-count" class="badge bg-danger">0</span>
+                        </a>
+                        <div id="auth-area" class="d-flex gap-2 flex-wrap"></div>
+                    </div>
                 </div>
             </div>
+        </nav>
 
-            <!-- SUMMARY -->
-            <div class="col-lg-6">
-                <div class="card p-4 shadow-sm">
-                    <h5>Order Summary</h5>
+        <main class="container py-4">
+            <section class="mb-4">
+                <div class="hero-shell">
+                    <span class="hero-kicker">Fast and secure order flow</span>
+                    <h1 class="hero-title mb-3">
+                        Complete Your
+                        <span>Checkout</span>
+                    </h1>
+                    <p class="hero-sub mb-0">
+                        Enter your shipping details and place your order smoothly.
+                    </p>
+                </div>
+            </section>
 
-                    <div id="checkout-items"></div>
+            <div id="checkout-alert"></div>
 
-                    <hr>
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="auth-card">
+                        <h3 class="fw-bold mb-3">Shipping Details</h3>
 
-                    <h5>Total: ₱<span id="checkout-total">0</span></h5>
+                        <form id="checkout-form">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="fullname" class="form-label fw-semibold">Full Name</label>
+                                    <input id="fullname" class="form-control" placeholder="Enter your full name">
+                                </div>
 
-                    <button onclick="placeOrder()" class="btn btn-success w-100 mt-3">
-                        Place Order
-                    </button>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                    <input id="phone" class="form-control" placeholder="09xxxxxxxxx">
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="address" class="form-label fw-semibold">Shipping Address</label>
+                                    <textarea id="address" class="form-control" rows="4"
+                                        placeholder="House no., street, barangay, city, province"></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="payment" class="form-label fw-semibold">Payment Method</label>
+                                    <select id="payment" class="form-select">
+                                        <option value="COD">Cash on Delivery</option>
+                                        <option value="GCash">GCash</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" id="place-order-btn" class="btn btn-primary btn-lg rounded-pill">
+                                    Place Order
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="cart-summary-card sticky-lg-top" style="top: 100px;">
+                        <h4 class="fw-bold mb-3">Order Summary</h4>
+                        <div id="checkout-items"></div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Total</span>
+                            <strong class="price-main">₱<span id="checkout-total">0</span></strong>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
 
+        <footer class="footer">
+            <div class="container text-center">
+                <p class="mb-0">© 2026 Kickbarks PhoneHub. All rights reserved.</p>
+            </div>
+        </footer>
     </div>
 
-    <script src="./js/checkout.js"></script>
-    <script src="./js/app.js"></script>
-
+    <script src="js/config.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

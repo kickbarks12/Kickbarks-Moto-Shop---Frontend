@@ -10,14 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function getAdminToken() {
-  return localStorage.getItem("adminToken") || localStorage.getItem("token");
+  return localStorage.getItem("adminToken");
 }
 
 function getAdminUser() {
   try {
-    return JSON.parse(localStorage.getItem("adminUser")) ||
-      JSON.parse(localStorage.getItem("user")) ||
-      null;
+    return JSON.parse(localStorage.getItem("adminUser")) || null;
   } catch {
     return null;
   }
@@ -29,7 +27,7 @@ function guardAdminPage() {
 
   if (!token || !user || user.role !== "admin") {
     alert("Admin access only.");
-    window.location.href = "../login.html";
+    window.location.href = "./admin-login.html";
   }
 }
 
@@ -38,11 +36,9 @@ function setupAdminLogout() {
   if (!btn) return;
 
   btn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminUser");
-    window.location.href = "../login.html";
+    window.location.href = "./admin-login.html";
   });
 }
 
@@ -85,8 +81,8 @@ async function loadProducts() {
         <td>
           <img
             src="${product.image || 'https://via.placeholder.com/80x80?text=No+Image'}"
-            alt="${product.name}"
-            style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px;"
+            alt="${product.name || 'Product Image'}"
+            class="admin-thumb"
           >
         </td>
         <td>${product.name || "-"}</td>
@@ -94,7 +90,9 @@ async function loadProducts() {
         <td>₱${Number(product.price || 0).toLocaleString()}</td>
         <td>${product.stock ?? 0}</td>
         <td>
-          ${product.featured ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'}
+          ${product.featured
+            ? '<span class="badge bg-success admin-status-badge">Yes</span>'
+            : '<span class="badge bg-secondary admin-status-badge">No</span>'}
         </td>
         <td>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product._id}')">
@@ -157,10 +155,6 @@ async function createProduct(event) {
 
     if (!res.ok) {
       showAdminProductsAlert(data.message || "Failed to create product.");
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "Save Product";
-      }
       return;
     }
 
